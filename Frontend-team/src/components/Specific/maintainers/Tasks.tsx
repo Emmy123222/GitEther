@@ -1,15 +1,15 @@
 /**
  * Tasks Component
- * 
+ *
  * This component is responsible for rendering tasks in different categories (To-Do, In Progress, Review, Done).
  * It allows users to interact with the tasks by opening modals to assign, reassign, or review tasks depending on the task's category.
- * 
+ *
  * The component also fetches performance metrics (tasks completed, pull requests approved, average task completion time)
  * from the context and displays them in a separate section. If data is still being loaded, placeholders are shown.
- * 
+ *
  * The tasks are grouped by their current status, and the component dynamically updates the task count for each category.
  * When a task is selected, a corresponding modal (AssignTaskModal, ReassignTaskModal, or ReviewTaskModal) is shown.
- * 
+ *
  * Dependencies:
  * - React: For building the component and managing state.
  * - MetricsContext: Provides performance metrics and task data.
@@ -17,7 +17,7 @@
  * - AssignTaskModal: Modal for assigning tasks.
  * - ReassignTaskModal: Modal for reassigning tasks.
  * - ReviewTaskModal: Modal for reviewing tasks.
- * 
+ *
  * @component
  */
 
@@ -25,9 +25,10 @@ import { useContext, useEffect, useState } from "react";
 // import { MetricsContext } from "../../../store/context/MetricsContext";
 import CustomBtn from "@/components/CustomBtn";
 import githubIcon from "@/assets/icons/githubIcon.png";
-import AssignTaskModal from './AssignTaskModal';
-import ReassignTaskModal from './ReassignTaskModal';
+import AssignTaskModal from "./AssignTaskModal";
+import ReassignTaskModal from "./ReassignTaskModal";
 import { MetricsContext } from "@/store/context/MetricsContext";
+import Modal from "../modal/Modal";
 // import ReviewTaskModal from './ReviewTaskModal';
 
 const Tasks = () => {
@@ -130,34 +131,64 @@ const Tasks = () => {
         return "";
     }
   };
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  }; // Toggle modal visibility
 
   return (
     <div className="font-sans text-white px-3 rounded-lg">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {/* Displaying performance metrics with loading state */}
-        {isLoading ? <Placeholder /> : (
+        {isLoading ? (
+          <Placeholder />
+        ) : (
           <div className=" h-44 p-4 border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-lg text-left">
-            <p className="text-[40px] font-kern font-medium">{metrics.tasksCompleted || "0/0"}</p>
+            <p className="text-[40px] font-kern font-medium">
+              {metrics.tasksCompleted || "0/0"}
+            </p>
             <p className="text-white font-thin font-kern">Tasks Completed</p>
           </div>
         )}
-        {isLoading ? <Placeholder /> : (
+        {isLoading ? (
+          <Placeholder />
+        ) : (
           <div className=" h-44 p-4 border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-lg text-left">
-            <p className="text-[40px] font-kern font-medium">{metrics.pullRequestsApproved || "0/0"}</p>
-            <p className="text-white font-thin font-kern">Pull Requests Approved</p>
+            <p className="text-[40px] font-kern font-medium">
+              {metrics.pullRequestsApproved || "0/0"}
+            </p>
+            <p className="text-white font-thin font-kern">
+              Pull Requests Approved
+            </p>
           </div>
         )}
-        {isLoading ? <Placeholder /> : (
+        {isLoading ? (
+          <Placeholder />
+        ) : (
           <div className=" h-44 p-4 border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-lg text-left">
-            <p className="text-[40px] font-kern font-medium">{metrics.avgTaskCompletionTime || "0"} Days</p>
-            <p className="text-white font-thin font-kern">Avg Task Completion Time</p>
+            <p className="text-[40px] font-kern font-medium">
+              {metrics.avgTaskCompletionTime || "0"} Days
+            </p>
+            <p className="text-white font-thin font-kern">
+              Avg Task Completion Time
+            </p>
           </div>
         )}
       </div>
 
       {/* Button to create new task */}
-      <button className="mt-4 bg-white text-black px-4 py-2 mb-4 rounded-full flex items-center justify-center w-fit transition">
-        <img src={githubIcon} className="filter invert pr-1" alt="GitHub Icon" />
+      {isModalOpen && <Modal onClose={toggleModal} />}
+
+      <button
+        className="mt-4 bg-white text-black px-4 py-2 mb-4 rounded-full flex items-center justify-center w-fit transition"
+        onClick={toggleModal}
+      >
+        <img
+          src={githubIcon}
+          className="filter invert pr-1"
+          alt="GitHub Icon"
+        />
         New Task
       </button>
 
@@ -165,14 +196,17 @@ const Tasks = () => {
         {/* Task categories and their corresponding tasks */}
         <div className="flex w-screen gap-5 h-auto">
           {categories.map((category) => (
-            <div key={category.id} className="w-[413px] h-[543px] border-border backdrop-blur-md  bg-white bg-opacity-5  py-6 px-4 rounded-[24px] border-[1px] border-opacity-50">
+            <div
+              key={category.id}
+              className="w-[413px] h-[543px] border-border backdrop-blur-md  bg-white bg-opacity-5  py-6 px-4 rounded-[24px] border-[1px] border-opacity-50"
+            >
               <div className="flex justify-between items-center mb-2 bg-[#0D0F1C] border-border border backdrop-blur-sm p-4 rounded-xl">
                 <h3 className="text-xl text-[#C9D1D9]">{category.title}</h3>
-                <div className=""><span className=" bg-blue-950 rounded-full py-[6px] px-3 text-xs font-matter p-1">
-                  {getTasksByCategory(category.id).length}
-                </span></div>
-
-
+                <div className="">
+                  <span className=" bg-blue-950 rounded-full py-[6px] px-3 text-xs font-matter p-1">
+                    {getTasksByCategory(category.id).length}
+                  </span>
+                </div>
               </div>
               <div className="mt-2">
                 {getTasksByCategory(category.id).length === 0 ? (
@@ -195,11 +229,16 @@ const Tasks = () => {
                             />
                           ))}
                         </div>
-                        <p className="text-sm text-[#8B949E] mb-2">Due by {task.dueDate}</p>
+                        <p className="text-sm text-[#8B949E] mb-2">
+                          Due by {task.dueDate}
+                        </p>
                       </div>
                       <div className="flex gap-2 flex-wrap mb-2">
                         {task.tags?.map((tag, index) => (
-                          <span key={index} className="bg-[#30363D] text-white py-1 px-3 rounded-lg text-xs">
+                          <span
+                            key={index}
+                            className="bg-[#30363D] text-white py-1 px-3 rounded-lg text-xs"
+                          >
                             {tag}
                           </span>
                         ))}
@@ -208,7 +247,9 @@ const Tasks = () => {
                       <CustomBtn
                         text={getButtonText(category.id)}
                         classname=""
-                        onClick={() => handleModalOpen(category.id, task as any)}
+                        onClick={() =>
+                          handleModalOpen(category.id, task as any)
+                        }
                       />
                     </div>
                   ))
@@ -220,8 +261,16 @@ const Tasks = () => {
       </div>
 
       {/* Modals based on task category */}
-      {modalType === "to-do" && <AssignTaskModal isOpen onClose={closeModal} task={selectedTask as any} />}
-      {modalType === "in-progress" && <ReassignTaskModal isOpen onClose={closeModal} />}
+      {modalType === "to-do" && (
+        <AssignTaskModal
+          isOpen
+          onClose={closeModal}
+          task={selectedTask as any}
+        />
+      )}
+      {modalType === "in-progress" && (
+        <ReassignTaskModal isOpen onClose={closeModal} />
+      )}
       {/* {modalType === "review" && <ReviewTaskModal isOpen onClose={closeModal} task={selectedTask} />} */}
     </div>
   );

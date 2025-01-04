@@ -10,7 +10,10 @@ import Tasks from "./Tasks";
 import TeamCollaboration from "./TeamCollaboration";
 import PaymentsFunding from "./PaymentsFunding";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import {Octokit} from "octokit"
+import { Octokit } from "octokit";
+import Modal1 from "../modal/Modal1";
+import Modal2 from "../modal/Modal2";
+
 /**
  * Navigation Component:
  * This component displays a sidebar with navigation buttons to switch between different sections of the application.
@@ -25,46 +28,69 @@ const Navigation = () => {
   const [selectedRepoName, setSelectedRepoName] = useState<string>("");
   const [selectedRepo, setSelectedRepo] = useState<any>();
 
-
-  
   const octokit = new Octokit({
     auth: "",
   });
   // Function to handle button clicks
-  const handleButtonClick = async() => {
-    const response = await octokit.request("GET /user/repos")
-    setRepos(response.data) 
-  }
-  const handleSelectRepo = async(repo:string) => {
+  const handleButtonClick = async () => {
+    const response = await octokit.request("GET /user/repos");
+    setRepos(response.data);
+  };
+  const handleSelectRepo = async (repo: string) => {
     const response = await octokit.request("GET /repos/{owner}/{repo}", {
       owner: "ethopensource",
       repo: selectedRepoName,
-    })
-    setSelectedRepo(response.data)
-  }
-useEffect(() => {
-  handleButtonClick()
-}, [])
-// console.log(selectedRepo)
+    });
+    setSelectedRepo(response.data);
+  };
+  useEffect(() => {
+    handleButtonClick();
+  }, []);
 
+  // console.log(selectedRepo)
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  }; // Toggle modal visibility
+  const [isModal, setIsModal] = useState(false); // State for modal visibility
+
+  const toggleModals = () => {
+    setIsModal(!isModal);
+  }; // Toggle modal visibility
+
+  
   return (
     <div className="flex flex-col w-full text-white">
       {/* Header Section */}
       <div className="flex justify-between items-center py-4 ">
-        <div className="flex items-center gap-2 text-grayBlue ">
+        {isModal && <Modal2 onClose={toggleModals} />}
+        <div
+          className="flex items-center gap-2 text-grayBlue "
+          onClick={toggleModals}
+        >
           <ChevronLeft size={16} /> Projects
         </div>
         <div className="flex items-center gap-5">
-          <div className="flex items-center gap-2 text-grayBlue">Projects <ChevronRight size={16} /></div>
-          <select onChange={(e) => setSelectedRepoName(e.target.value)} className="bg-transparent rounded-md p-2 outline-none focus:outline-none focus:border-none optional:bg-opacity-20 ">
+          {isModalOpen && <Modal1 onClose={toggleModal} />}
+          <div
+            className="flex items-center gap-2 text-grayBlue cursor-pointer"
+            onClick={toggleModal}
+          >
+            Projects <ChevronRight size={16} />
+          </div>
+
+          <select
+            onChange={(e) => setSelectedRepoName(e.target.value)}
+            className="bg-transparent rounded-md p-2 outline-none focus:outline-none focus:border-none optional:bg-opacity-20 "
+          >
             {repos?.map((repo) => (
-              <option key={repo.id} value={repo.name}  className="bg-black">
+              <option key={repo.id} value={repo.name} className="bg-black">
                 {repo.name}
               </option>
             ))}
           </select>
         </div>
-
       </div>
 
       <div className="flex flex-col md:flex-row mt-6  w-full">
@@ -73,7 +99,8 @@ useEffect(() => {
           {/* Title of the sidebar with a collapsible arrow */}
           <h2 className="pl-4 pr-4 text-white font-semibold flex justify-between mb-1 text-center md:text-left text-2xl">
             Your Projects
-            <img src={arrow} className="pr-1" alt="Collapse Icon" /> {/* Arrow icon to collapse sidebar */}
+            <img src={arrow} className="pr-1" alt="Collapse Icon" />{" "}
+            {/* Arrow icon to collapse sidebar */}
           </h2>
 
           {/* Subtitle explaining the projects section */}
@@ -96,8 +123,11 @@ useEffect(() => {
             ].map((button) => (
               <button
                 key={button.value}
-                className={`w-full text-left px-4 py-2 rounded-lg text-white ${isActive === button.value ? "bg-grayBlue  bg-opacity-15 backdrop-blur-lg " : ""
-                  }`}
+                className={`w-full text-left px-4 py-2 rounded-lg text-white ${
+                  isActive === button.value
+                    ? "bg-grayBlue  bg-opacity-15 backdrop-blur-lg "
+                    : ""
+                }`}
                 onClick={() => {
                   // Set the active component to display the correct section
                   setActiveComponent(button.value);
@@ -113,11 +143,8 @@ useEffect(() => {
 
         {/* Content Area */}
         <div className="w-full md:w-3/4 p-1 sm:px-3">
-
           {activeComponent === "Tasks" && <Tasks />}
           <div>
-
-
             {/* Render Active Component Based on the State */}
             {activeComponent === "TeamCollaboration" && <TeamCollaboration />}
             {activeComponent === "PaymentsFunding" && <PaymentsFunding />}

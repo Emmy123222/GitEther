@@ -14,15 +14,15 @@ const Placeholder: React.FC = () => (
 
 /**
  * PaymentsFunding Component
- * 
+ *
  * This component displays the payments and funding information for the user.
  * It fetches the available funds, pending payments, and a table of payment records from the context (MetricsContext).
  * It handles loading and error states by displaying placeholders and error messages when necessary.
- * 
+ *
  * The component includes:
  * - Summary cards displaying available funds and pending payments.
  * - A table that shows contributors, amounts, statuses, and actions (Reward button) for each payment record.
- * 
+ *
  * States:
  * - isLoading: Controls loading state.
  * - hasError: Controls error state in case data fetch fails.
@@ -78,6 +78,7 @@ const PaymentsFunding: React.FC = () => {
         ) : (
           <>
             {/* Available Funds Card */}
+
             <div
               className="border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5  p-6 rounded-3xl flex flex-col items-start space-y-2"
               title="Total available funds"
@@ -123,83 +124,82 @@ const PaymentsFunding: React.FC = () => {
 
       {/* Payments Table */}
       <div className="overflow-x-auto">
-
         <div className="border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 p-4 md:p-6 rounded-xl ">
           <div className="border-border border-opacity-50 backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-xl overflow-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="text-left font-light font-kern text-white bg-[#0D0F1C]">
-                <th className="py-3 px-4 whitespace-nowrap">Contributors</th>
-                <th className="py-3 px-4 whitespace-nowrap">Amount</th>
-                <th className="py-3 px-4 whitespace-nowrap">Status</th>
-                <th className="py-3 px-4 whitespace-nowrap">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <>
-                  {[...Array(3)].map((_, index) => (
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="text-left font-light font-kern text-white bg-[#0D0F1C]">
+                  <th className="py-3 px-4 whitespace-nowrap">Contributors</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Amount</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Status</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <>
+                    {[...Array(3)].map((_, index) => (
+                      <tr
+                        key={index}
+                        className="text-gray-400 h-6 bg-[#101323] animate-pulse"
+                      >
+                        <td className="py-4 px-4" colSpan={4}>
+                          Loading payment records...
+                        </td>
+                      </tr>
+                    ))}
+                  </>
+                ) : metrics.payments.length > 0 ? (
+                  metrics.payments.map((payment, index) => (
                     <tr
                       key={index}
-                      className="text-gray-400 h-6 bg-[#101323] animate-pulse"
+                      className="text-white font-kern h-6 border border-b-[#293056] bg-[#101323]"
                     >
-                      <td className="py-4 px-4" colSpan={4}>
-                        Loading payment records...
+                      {/* Contributor Cell */}
+                      <td className="py-4 px-4 items-center space-x-2">
+                        <div className="flex items-center justify-start space-x-3 sm:mr-4 font-kern rounded-full w-fit p-1 bg-[#0D0F1C]">
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white">
+                            {/* Profile Picture */}
+                            <img src={profilePic} alt="Profile" />
+                          </div>
+                          <div>
+                            <h3 className="text-white pr-2 font-light">
+                              {payment.contributor || "Unknown"}
+                            </h3>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Amount Cell */}
+                      <td className="py-4 px-4 items-center space-x-2">
+                        <img
+                          src={USDT}
+                          alt="USDT"
+                          className="w-5 h-5 inline-block object-contain"
+                        />
+                        <span>{payment.amount} USDT</span>
+                      </td>
+
+                      {/* Status Cell */}
+                      <td className="py-4 px-4">{payment.status}</td>
+
+                      {/* Action Cell */}
+                      <td className="py-4 px-4">
+                        <button className="bg-white text-black px-4 py-1 rounded-full">
+                          Reward
+                        </button>
                       </td>
                     </tr>
-                  ))}
-                </>
-              ) : metrics.payments.length > 0 ? (
-                metrics.payments.map((payment, index) => (
-                  <tr
-                    key={index}
-                    className="text-white font-kern h-6 border border-b-[#293056] bg-[#101323]"
-                  >
-                    {/* Contributor Cell */}
-                    <td className="py-4 px-4 items-center space-x-2">
-                      <div className="flex items-center justify-start space-x-3 sm:mr-4 font-kern rounded-full w-fit p-1 bg-[#0D0F1C]">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white">
-                          {/* Profile Picture */}
-                          <img src={profilePic} alt="Profile" />
-                        </div>
-                        <div>
-                          <h3 className="text-white pr-2 font-light">
-                            {payment.contributor || "Unknown"}
-                          </h3>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Amount Cell */}
-                    <td className="py-4 px-4 items-center space-x-2">
-                      <img
-                        src={USDT}
-                        alt="USDT"
-                        className="w-5 h-5 inline-block object-contain"
-                      />
-                      <span>{payment.amount} USDT</span>
-                    </td>
-
-                    {/* Status Cell */}
-                    <td className="py-4 px-4">{payment.status}</td>
-
-                    {/* Action Cell */}
-                    <td className="py-4 px-4">
-                      <button className="bg-white text-black px-4 py-1 rounded-full">
-                        Reward
-                      </button>
+                  ))
+                ) : (
+                  <tr className="text-gray-400 h-6 bg-[#101323]">
+                    <td className="py-4 px-4" colSpan={4}>
+                      No payment records found.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr className="text-gray-400 h-6 bg-[#101323]">
-                  <td className="py-4 px-4" colSpan={4}>
-                    No payment records found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
