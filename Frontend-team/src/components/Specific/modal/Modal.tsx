@@ -1,7 +1,7 @@
-import React, { useState } from "react";
 import right from "@/assets/images/💜 Right Icon (1).png";
 import contain from "@/assets/images/Container (47).png";
 import fram from "@/assets/images/Frame (33).png";
+import { useState } from "react";
 
 // Define a type for organizations
 type Organization = {

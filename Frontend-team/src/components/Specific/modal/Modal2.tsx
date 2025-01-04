@@ -1,4 +1,3 @@
-import React from "react";
 import right from "@/assets/images/💜 Right Icon (1).png";
 import feature from "@/assets/images/Featured icon.png";
 import plus from "@/assets/images/plus.png";
