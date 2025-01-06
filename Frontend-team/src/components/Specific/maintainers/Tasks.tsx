@@ -29,6 +29,9 @@ import AssignTaskModal from "./AssignTaskModal";
 import ReassignTaskModal from "./ReassignTaskModal";
 import { MetricsContext } from "@/store/context/MetricsContext";
 import Modal from "../modal/Modal";
+import Modal4 from "../modal/Modal4";
+import Modal5 from "../modal/Modal5";
+import Modal6 from "../modal/Modal6";
 // import ReviewTaskModal from './ReviewTaskModal';
 
 const Tasks = () => {
@@ -135,7 +138,21 @@ const Tasks = () => {
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+  };
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const toggleModals = () => {
+    setIsConfirmModalOpen(!isConfirmModalOpen);
   }; // Toggle modal visibility
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+
+  const toggleTaskModal = () => {
+    setIsTaskModalOpen(!isTaskModalOpen);
+  };
+  const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
+
+  const toggleCustomModal = () => {
+    setIsCustomModalOpen(!isCustomModalOpen);
+  };
 
   return (
     <div className="font-sans text-white px-3 rounded-lg">
@@ -144,7 +161,10 @@ const Tasks = () => {
         {isLoading ? (
           <Placeholder />
         ) : (
-          <div className=" h-44 p-4 border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-lg text-left">
+          <div
+            className=" h-44 p-4 border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-lg text-left"
+            onClick={toggleModals}
+          >
             <p className="text-[40px] font-kern font-medium">
               {metrics.tasksCompleted || "0/0"}
             </p>
@@ -154,7 +174,10 @@ const Tasks = () => {
         {isLoading ? (
           <Placeholder />
         ) : (
-          <div className=" h-44 p-4 border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-lg text-left">
+          <div
+            className=" h-44 p-4 border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-lg text-left"
+            onClick={toggleTaskModal}
+          >
             <p className="text-[40px] font-kern font-medium">
               {metrics.pullRequestsApproved || "0/0"}
             </p>
@@ -166,7 +189,10 @@ const Tasks = () => {
         {isLoading ? (
           <Placeholder />
         ) : (
-          <div className=" h-44 p-4 border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-lg text-left">
+          <div
+            className=" h-44 p-4 border-border backdrop-blur-md border-[1px] bg-white bg-opacity-5 rounded-lg text-left"
+            onClick={toggleCustomModal}
+          >
             <p className="text-[40px] font-kern font-medium">
               {metrics.avgTaskCompletionTime || "0"} Days
             </p>
@@ -272,6 +298,9 @@ const Tasks = () => {
         <ReassignTaskModal isOpen onClose={closeModal} />
       )}
       {/* {modalType === "review" && <ReviewTaskModal isOpen onClose={closeModal} task={selectedTask} />} */}
+      <Modal4 isOpen={isConfirmModalOpen} onClose={toggleModals} />
+      <Modal5 isOpen={isTaskModalOpen} onClose={toggleTaskModal} />
+      <Modal6 isOpen={isCustomModalOpen} onClose={toggleCustomModal} />
     </div>
   );
 };
